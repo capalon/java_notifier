@@ -1,0 +1,85 @@
+<project name="Dashboard" basedir="." default="main">
+
+    <property name="src.dir"     value="."/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="."/>
+
+    <property name="main-class"  value="Dashboard"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}" file="${ant.project.name}.jar"/>
+    </target>
+
+    <target name="debug-clean">
+        <delete dir="${build.dir}" file="${ant.project.name}-debug.jar"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="Dashboard.java"/>
+            </fileset>
+            <filterset begintoken="//[" endtoken="]">
+                <filter token="ifDEBUG" value="/*"/>
+                <filter token="endDEBUG" value="*/"/>
+            </filterset>
+        </copy>
+	<javac includeantruntime="false" srcdir="${build.dir}" destdir="${classes.dir}">
+		<compilerarg value="-Xlint" />
+		<compilerarg value="-Xlint:unchecked" />
+		<compilerarg value="-Xlint:deprecation" />
+	</javac>
+	<copy todir="${classes.dir}" file="config.txt"/>
+	<copy todir="${classes.dir}" file="beep.wav"/>
+    </target>
+
+    <target name="debug-compile">
+        <mkdir dir="${classes.dir}"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="Dashboard.java"/>
+            </fileset>
+            <filterset begintoken="//[" endtoken="]">
+                <filter token="ifDEBUG" value=""/>
+                <filter token="endDEBUG" value=""/>
+            </filterset>
+        </copy>
+        <javac includeantruntime="false" srcdir="${build.dir}" destdir="${classes.dir}">
+		<compilerarg value="-Xlint" />
+		<compilerarg value="-Xlint:unchecked" />
+		<compilerarg value="-Xlint:deprecation" />
+	</javac>
+	<copy todir="${classes.dir}" file="config.txt"/>
+	<copy todir="${classes.dir}" file="beep.wav"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="debug-jar" depends="debug-compile">
+        <jar destfile="${jar.dir}/${ant.project.name}-debug.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="main">
+        <java jar="${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <target name="rundebug" depends="debug">
+        <java jar="${ant.project.name}-debug.jar" fork="true"/>
+    </target>
+
+    <target name="main" depends="clean,jar"/>
+    <target name="debug" depends="debug-clean,debug-jar"/>
+
+</project>

@@ -1,0 +1,11 @@
+# IP
+127.0.0.1
+# port
+5070
+# scroll direction - 0 inserts at top, 1 inserts at bottom
+0
+# sound enabled - 1 = on, 0 = off
+1
+# domain(s)
+admin
+
